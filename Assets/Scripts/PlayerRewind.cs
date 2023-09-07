@@ -10,22 +10,22 @@ public class PlayerRewind : MonoBehaviour
 
     private void Update()
     {
-        // Add new states onto end of list
-        float currentTime = Time.time;
-        PreviousPlayerStates.Add(new PlayerState(transform.position, GetComponent<SimplePlayerHealth>().GetHealth(), currentTime));
-
-        // Remove states that are too old from the beginning of the list
-        while (PreviousPlayerStates.Count > 0 && currentTime - PreviousPlayerStates[0].Timestamp > RewindDelay)
+        PlayerState currentState = GetComponent<PlayerStats>().SaveState();
+        PreviousPlayerStates.Add(currentState);
+        while (PreviousPlayerStates.Count > 0 && currentState.Timestamp - PreviousPlayerStates[0].Timestamp > RewindDelay)
         {
-            PreviousPlayerStates.RemoveAt(0);
+            PreviousPlayerStates.RemoveAt(0); // Remove states that are too old from the beginning of the list
         }
-
         // Rewind player on space
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            transform.position = PreviousPlayerStates[0].Position;
-            GetComponent<SimplePlayerHealth>().SetHealth(PreviousPlayerStates[0].Health);
+            GetComponent<PlayerStats>().RestoreState(PreviousPlayerStates[0]);
             PreviousPlayerStates.Clear();
         }
+    }
+
+    private void OnDisable()
+    {
+        PreviousPlayerStates.Clear(); // Necessary to prevent a cascade of errors with the list having elements on exit
     }
 }

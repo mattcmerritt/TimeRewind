@@ -2,10 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Handles the critical data of the player, specifically health
-public class SimplePlayerHealth : MonoBehaviour
+[CreateAssetMenu]
+public class PlayerHealth : ScriptableObject
 {
-    [SerializeField] private int Health = 100;
+    public int Health;
+    public int MaxHealth = 100;
+
+    private void OnEnable()
+    {
+        Health = MaxHealth;
+    }
 
     public void LoseHealth(int lostHealth)
     {
@@ -15,10 +21,5 @@ public class SimplePlayerHealth : MonoBehaviour
     public void SetHealth(int newHealth)
     {
         Health = newHealth;
-    }
-
-    public int GetHealth()
-    {
-        return Health;
     }
 }
